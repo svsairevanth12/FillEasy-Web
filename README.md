@@ -11,9 +11,7 @@ Fill Easy is an AI-powered form builder that allows you to create, manage, and s
 - 🔒 User authentication
 - 📤 Form sharing capabilities
 
-## Live Demo
 
-Access the live application at: [Your Deployed URL]
 
 Test Account:
 - Email: test@gmail.com
@@ -23,8 +21,8 @@ Test Account:
 
 1. Clone the repository:
    ```bash
-   git clone [your-repo-url]
-   cd [repo-name]
+   git clone [https://github.com/svsairevanth12/FillEasy-Web.git]
+   cd [FillEasy-Web]
    ```
 
 2. Install dependencies:
