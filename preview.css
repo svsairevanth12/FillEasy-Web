@@ -1,0 +1,203 @@
+.preview-container {
+	max-width: 640px;
+	margin: 2rem auto;
+	padding: 0 1rem;
+}
+
+.form-preview {
+	background-color: transparent;
+}
+
+.form-preview .form-header {
+	margin-bottom: 12px;
+}
+
+.form-preview .form-title {
+	font-size: 32px;
+	font-weight: 400;
+	margin-bottom: 12px;
+	color: #202124;
+}
+
+.form-preview .form-description {
+	font-size: 14px;
+	color: #666;
+}
+
+.form-preview .question-card {
+	background-color: white;
+	border-radius: 8px;
+	padding: 24px;
+	margin-bottom: 12px;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Speech Recognition Styles */
+.input-wrapper {
+	position: relative;
+	display: flex;
+	align-items: flex-start;
+	width: 100%;
+}
+
+.speech-btn {
+	background: none;
+	border: none;
+	color: #5f6368;
+	cursor: pointer;
+	padding: 8px;
+	border-radius: 50%;
+	margin-left: 8px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: all 0.2s;
+	flex-shrink: 0;
+}
+
+.speech-btn:hover {
+	background-color: var(--hover-color);
+	color: var(--primary-color);
+}
+
+.speech-btn.listening {
+	color: var(--primary-color);
+	animation: pulse 1.5s infinite;
+}
+
+.speech-indicator {
+	font-size: 12px;
+	color: var(--primary-color);
+	margin-left: 8px;
+	white-space: nowrap;
+}
+
+/* Form Controls */
+.answer-input {
+	width: 100%;
+	padding: 8px;
+	border: 1px solid var(--border-color);
+	border-radius: 4px;
+	font-size: 14px;
+	resize: vertical;
+}
+
+textarea.answer-input {
+	min-height: 100px;
+}
+
+.answer-input:focus {
+	border-color: var(--primary-color);
+	outline: none;
+}
+
+.radio-option,
+.checkbox-option {
+	display: flex;
+	align-items: center;
+	margin-bottom: 8px;
+}
+
+.radio-option input[type="radio"],
+.checkbox-option input[type="checkbox"] {
+	margin-right: 8px;
+}
+
+.radio-option label,
+.checkbox-option label {
+	font-size: 14px;
+	color: #202124;
+}
+
+select.answer-input {
+	height: 36px;
+	background-color: white;
+}
+
+/* Form Actions */
+.form-actions {
+	margin-top: 24px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.submit-btn {
+	background-color: var(--primary-color);
+	color: white;
+	border: none;
+	padding: 10px 24px;
+	border-radius: 4px;
+	font-size: 14px;
+	cursor: pointer;
+	transition: background-color 0.2s;
+}
+
+.submit-btn:hover {
+	opacity: 0.9;
+}
+
+.submit-btn:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+
+/* Response Message */
+.response-message {
+	text-align: center;
+	padding: 16px;
+	border-radius: 8px;
+	margin-top: 24px;
+	display: none;
+}
+
+.response-message.success {
+	background-color: #e6f4ea;
+	color: #0f9d58;
+	border: 1px solid #0f9d58;
+}
+
+.response-message.error {
+	background-color: #fce8e6;
+	color: #d93025;
+	border: 1px solid #d93025;
+}
+
+/* Error States */
+.question-card.error .answer-input {
+	border-color: #d93025;
+}
+
+.question-card.error .error-message {
+	color: #d93025;
+	font-size: 12px;
+	margin-top: 4px;
+	display: block;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+	.preview-container {
+		margin: 1rem auto;
+	}
+
+	.speech-indicator {
+		font-size: 10px;
+	}
+
+	.submit-btn {
+		width: 100%;
+	}
+}
+
+@keyframes pulse {
+	0% {
+		transform: scale(1);
+	}
+	50% {
+		transform: scale(1.1);
+	}
+	100% {
+		transform: scale(1);
+	}
+}

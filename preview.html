@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Fill Easy - Form Preview</title>
+	<link rel="stylesheet" href="styles.css">
+	<link rel="stylesheet" href="preview.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+	<div class="preview-container">
+		<div class="form-preview">
+			<header class="form-header">
+				<div class="header-content">
+					<h1 class="form-title"></h1>
+					<p class="form-description"></p>
+				</div>
+			</header>
+
+			<main class="form-content">
+				<div class="questions-container">
+					<!-- Questions will be loaded here -->
+				</div>
+
+				<div class="form-actions">
+					<button id="submit-form" class="submit-btn">Submit</button>
+				</div>
+			</main>
+
+			<div class="response-message"></div>
+		</div>
+	</div>
+
+	<script src="speech.js"></script>
+	<script src="preview.js"></script>
+</body>
+</html>

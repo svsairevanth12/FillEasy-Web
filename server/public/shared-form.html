@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Fill Easy - Shared Form</title>
+	<link rel="stylesheet" href="/styles.css">
+	<link rel="stylesheet" href="/preview.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+	<script src="/speech.js"></script>
+	<style>
+		.shared-form-container {
+			max-width: 640px;
+			margin: 2rem auto;
+			padding: 0 1rem;
+		}
+
+		.loading {
+			text-align: center;
+			padding: 2rem;
+			color: #666;
+		}
+
+		.error-message {
+			background-color: #fce8e6;
+			color: #d93025;
+			padding: 1rem;
+			border-radius: 8px;
+			margin: 1rem 0;
+			text-align: center;
+		}
+
+		.success-message {
+			background-color: #e6f4ea;
+			color: #0f9d58;
+			padding: 1rem;
+			border-radius: 8px;
+			margin: 1rem 0;
+			text-align: center;
+		}
+
+		.input-wrapper {
+			position: relative;
+			display: flex;
+			align-items: flex-start;
+			gap: 8px;
+			width: 100%;
+		}
+
+		.input-wrapper input[type="text"],
+		.input-wrapper textarea {
+			flex: 1;
+			width: 100%;
+			padding: 8px;
+			border: 1px solid #ddd;
+			border-radius: 4px;
+			font-size: 1rem;
+		}
+
+		.speech-button-container {
+			display: flex;
+			align-items: center;
+			min-width: 40px;
+		}
+
+		.speech-btn {
+			background: none;
+			border: none;
+			color: #666;
+			cursor: pointer;
+			padding: 8px;
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			transition: all 0.2s ease;
+			width: 36px;
+			height: 36px;
+		}
+
+		.speech-btn:hover {
+			background-color: #f1f3f4;
+			color: #1a73e8;
+		}
+
+		.speech-btn.listening {
+			color: #1a73e8;
+			background-color: #e8f0fe;
+			box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+		}
+
+		.speech-indicator {
+			font-size: 0.8rem;
+			color: #1a73e8;
+			margin-left: 8px;
+			white-space: nowrap;
+		}
+
+		.question-card {
+			background: white;
+			border: 1px solid #dadce0;
+			border-radius: 8px;
+			padding: 24px;
+			margin-bottom: 16px;
+		}
+
+		.question-title {
+			font-size: 1rem;
+			font-weight: 500;
+			color: #202124;
+			margin-bottom: 8px;
+		}
+
+		.required-marker {
+			color: #d93025;
+			margin-left: 4px;
+		}
+
+		/* Responsive adjustments */
+		@media (max-width: 600px) {
+			.input-wrapper {
+				flex-direction: column;
+			}
+
+			.speech-button-container {
+				position: absolute;
+				right: 0;
+				top: 50%;
+				transform: translateY(-50%);
+			}
+
+			.input-wrapper input[type="text"],
+			.input-wrapper textarea {
+				padding-right: 44px; /* Make room for the speech button */
+			}
+		}
+	</style>
+</head>
+<body>
+	<div class="shared-form-container">
+		<div id="loading" class="loading">
+			Loading form...
+		</div>
+		<div id="form-content" style="display: none;">
+			<div class="form-preview">
+				<header class="form-header">
+					<div class="header-content">
+						<h1 id="form-title" class="form-title"></h1>
+						<p id="form-description" class="form-description"></p>
+					</div>
+				</header>
+
+				<main class="form-content">
+					<div id="questions-container" class="questions-container">
+						<!-- Questions will be loaded here -->
+					</div>
+
+					<div class="form-actions">
+						<button id="submit-form" class="submit-btn">Submit</button>
+					</div>
+				</main>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		class SharedForm {
+			constructor() {
+				this.formData = null;
+				this.shareId = new URLSearchParams(window.location.search).get('id');
+				if (!this.shareId) {
+					this.showError('Invalid form link');
+					return;
+				}
+				this.init();
+			}
+
+			async init() {
+				try {
+					await this.loadForm();
+					this.bindEvents();
+				} catch (error) {
+					console.error('Error initializing form:', error);
+					this.showError('Failed to load form');
+				}
+			}
+
+			async loadForm() {
+				const response = await fetch(`/api/forms/share/${this.shareId}`);
+				if (!response.ok) {
+					throw new Error('Form not found');
+				}
+				this.formData = await response.json();
+				this.renderForm();
+			}
+
+			renderForm() {
+				document.getElementById('loading').style.display = 'none';
+				document.getElementById('form-content').style.display = 'block';
+				
+				document.getElementById('form-title').textContent = this.formData.title;
+				document.getElementById('form-description').textContent = this.formData.description;
+				
+				const container = document.getElementById('questions-container');
+				container.innerHTML = this.formData.questions.map((q, i) => this.createQuestionHTML(q, i)).join('');
+				
+				// Initialize speech buttons after rendering the form
+				this.initializeSpeechButtons();
+			}
+
+			createQuestionHTML(question, index) {
+				return `
+					<div class="question-card" data-question-id="${question.id}">
+						<div class="question-title">
+							${question.question || `Question ${index + 1}`}
+							${question.required ? '<span class="required-marker">*</span>' : ''}
+						</div>
+						${this.createAnswerHTML(question)}
+						<div class="error-message">This is a required question</div>
+					</div>
+				`;
+			}
+
+			createAnswerHTML(question) {
+				switch (question.type) {
+					case 'short':
+						return `
+							<div class="input-wrapper">
+								<input type="text" class="answer-input" placeholder="Your answer" ${question.required ? 'required' : ''}>
+								<div class="speech-button-container"></div>
+							</div>`;
+					case 'paragraph':
+						return `
+							<div class="input-wrapper">
+								<textarea class="answer-input" rows="4" placeholder="Your answer" ${question.required ? 'required' : ''}></textarea>
+								<div class="speech-button-container"></div>
+							</div>`;
+					case 'multiple':
+						return this.createOptionsHTML(question, 'radio');
+					case 'checkbox':
+						return this.createOptionsHTML(question, 'checkbox');
+					case 'dropdown':
+						return this.createDropdownHTML(question);
+					default:
+						return '';
+				}
+			}
+
+			initializeSpeechButtons() {
+				const textInputs = document.querySelectorAll('input[type="text"], textarea');
+				textInputs.forEach(input => {
+					const container = input.parentElement.querySelector('.speech-button-container');
+					if (container) {
+						window.speechRecognition.addSpeechButton(input, container);
+					}
+				});
+			}
+
+			createOptionsHTML(question, type) {
+				const name = `question-${question.id}`;
+				return `
+					<div class="options-container">
+						${question.options.map((option, index) => `
+							<div class="${type}-option">
+								<input type="${type}" 
+									name="${name}" 
+									id="${name}-${index}"
+									value="${this.escapeHtml(option)}"
+									${question.required && type === 'radio' ? 'required' : ''}>
+								<label for="${name}-${index}">${this.escapeHtml(option)}</label>
+							</div>
+						`).join('')}
+					</div>
+				`;
+			}
+
+			createDropdownHTML(question) {
+				const name = `question-${question.id}`;
+				return `
+					<select class="answer-input" name="${name}" ${question.required ? 'required' : ''}>
+						<option value="">Choose</option>
+						${question.options.map((option, index) => `
+							<option value="${index}">${this.escapeHtml(option)}</option>
+						`).join('')}
+					</select>
+				`;
+			}
+
+			bindEvents() {
+				document.getElementById('submit-form').addEventListener('click', () => this.handleSubmit());
+			}
+
+			async handleSubmit() {
+				const responses = [];
+				let hasErrors = false;
+
+				this.formData.questions.forEach(question => {
+					const card = document.querySelector(`[data-question-id="${question.id}"]`);
+					const response = this.getQuestionResponse(question, card);
+
+					if (question.required && !this.isResponseValid(response)) {
+						card.classList.add('error');
+						hasErrors = true;
+					} else {
+						card.classList.remove('error');
+					}
+
+					responses.push({
+						questionId: question.id,
+						question: question.question,
+						type: question.type,
+						response: response
+					});
+				});
+
+				if (hasErrors) {
+					this.showError('Please fill in all required questions.');
+					return;
+				}
+
+				try {
+					const response = await fetch(`/api/forms/${this.formData.id}/responses`, {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+						},
+						body: JSON.stringify({ responses })
+					});
+
+					if (!response.ok) {
+						throw new Error('Failed to submit response');
+					}
+
+					this.showSuccess('Form submitted successfully!');
+					document.getElementById('submit-form').disabled = true;
+				} catch (error) {
+					console.error('Error submitting form:', error);
+					this.showError('Failed to submit form. Please try again.');
+				}
+			}
+
+			getQuestionResponse(question, card) {
+				switch (question.type) {
+					case 'short':
+					case 'paragraph':
+						return card.querySelector('.answer-input').value;
+					case 'multiple':
+						const selectedRadio = card.querySelector('input[type="radio"]:checked');
+						return selectedRadio ? selectedRadio.value : '';
+					case 'checkbox':
+						const selectedBoxes = card.querySelectorAll('input[type="checkbox"]:checked');
+						return Array.from(selectedBoxes).map(box => box.value);
+					case 'dropdown':
+						const select = card.querySelector('select');
+						return select.options[select.selectedIndex].text;
+					default:
+						return '';
+				}
+			}
+
+			isResponseValid(response) {
+				if (Array.isArray(response)) {
+					return response.length > 0;
+				}
+				return response !== '' && response !== 'Choose';
+			}
+
+			showError(message) {
+				this.showMessage(message, 'error');
+			}
+
+			showSuccess(message) {
+				this.showMessage(message, 'success');
+			}
+
+			showMessage(message, type) {
+				let messageDiv = document.querySelector(`.${type}-message`);
+				if (!messageDiv) {
+					messageDiv = document.createElement('div');
+					messageDiv.className = `${type}-message`;
+					document.querySelector('.form-content').appendChild(messageDiv);
+				}
+				messageDiv.textContent = message;
+				messageDiv.scrollIntoView({ behavior: 'smooth' });
+			}
+
+			escapeHtml(unsafe) {
+				return unsafe
+					.toString()
+					.replace(/&/g, "&amp;")
+					.replace(/</g, "&lt;")
+					.replace(/>/g, "&gt;")
+					.replace(/"/g, "&quot;")
+					.replace(/'/g, "&#039;");
+			}
+		}
+
+		// Initialize the shared form
+		new SharedForm();
+	</script>
+</body>
+</html>

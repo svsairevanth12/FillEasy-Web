@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Fill Easy - Form Builder</title>
+	<link rel="stylesheet" href="styles.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+	<nav class="top-nav">
+		<div class="nav-content">
+			<div class="nav-left">
+				<a href="forms.html" class="nav-link">
+					<i class="fas fa-chevron-left"></i>
+					Back to Forms
+				</a>
+			</div>
+			<div class="nav-right">
+				<button id="preview-btn" class="nav-btn">
+					<i class="fas fa-eye"></i>
+					Preview
+				</button>
+				<button id="save-btn" class="nav-btn primary">
+					<i class="fas fa-save"></i>
+					Save
+				</button>
+			</div>
+		</div>
+	</nav>
+
+	<div class="form-builder">
+		<header class="form-header">
+			<div class="header-content">
+				<div class="input-wrapper">
+					<input type="text" class="form-title" placeholder="Untitled form">
+				</div>
+				<div class="input-wrapper">
+					<input type="text" class="form-description" placeholder="Form description">
+				</div>
+			</div>
+		</header>
+		
+		<main class="form-content">
+			<div class="questions-container">
+				<!-- Questions will be added here dynamically -->
+			</div>
+			
+			<div class="add-question">
+				<button id="add-question-btn">
+					<i class="fas fa-plus"></i> Add Question
+				</button>
+			</div>
+		</main>
+	</div>
+
+	<div class="question-types-menu" style="display: none;">
+		<div class="menu-item" data-type="short">
+			<i class="fas fa-font"></i> Short Answer
+		</div>
+		<div class="menu-item" data-type="paragraph">
+			<i class="fas fa-paragraph"></i> Paragraph
+		</div>
+		<div class="menu-item" data-type="multiple">
+			<i class="fas fa-list"></i> Multiple Choice
+		</div>
+		<div class="menu-item" data-type="checkbox">
+			<i class="fas fa-check-square"></i> Checkboxes
+		</div>
+		<div class="menu-item" data-type="dropdown">
+			<i class="fas fa-caret-down"></i> Dropdown
+		</div>
+	</div>
+
+	<script src="speech.js"></script>
+	<script src="script.js"></script>
+</body>
+</html>

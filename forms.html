@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>My Forms - Fill Easy</title>
+	<link rel="stylesheet" href="styles.css">
+	<link rel="stylesheet" href="forms.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+	<div class="forms-dashboard">
+		<header class="dashboard-header">
+			<h1>My Forms</h1>
+			<div class="header-actions">
+				<button id="logout-btn" class="nav-btn" onclick="handleLogout()">
+					<i class="fas fa-sign-out-alt"></i> Logout
+				</button>
+				<button id="generate-form" class="generate-btn">
+					<i class="fas fa-magic"></i> Generate Form with AI
+				</button>
+				<button id="create-new-form" onclick="window.location.href='form-builder'">
+					<i class="fas fa-plus"></i> Create New Form
+				</button>
+			</div>
+		</header>
+
+		<main class="forms-container">
+			<div class="forms-grid" id="forms-grid">
+				<!-- Forms will be loaded here -->
+			</div>
+		</main>
+
+		<!-- Form Details Modal -->
+		<div id="form-details-modal" class="modal">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h2 id="modal-title">Form Responses</h2>
+					<button class="close-modal">&times;</button>
+				</div>
+				<div class="modal-body">
+					<div class="responses-summary">
+						<div class="summary-item">
+							<span class="summary-label">Total Responses:</span>
+							<span id="total-responses">0</span>
+						</div>
+						<div class="summary-item">
+							<span class="summary-label">Last Response:</span>
+							<span id="last-response">Never</span>
+						</div>
+					</div>
+					<div class="responses-list" id="responses-list">
+						<!-- Responses will be loaded here -->
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button class="modal-btn" id="export-responses">Export Responses</button>
+					<button class="modal-btn close-modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="forms.js"></script>
+
+	<!-- AI Form Generation Modal -->
+	<div id="generate-form-modal" class="modal">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2>Generate Form with AI</h2>
+				<button class="close-modal">&times;</button>
+			</div>
+			<div class="modal-body">
+				<div class="form-group">
+					<label for="form-prompt">Describe your form:</label>
+					<textarea id="form-prompt" rows="4" placeholder="Example: Create a student ID card data collection form"></textarea>
+					<p class="help-text">Be specific about what information you want to collect and any special requirements.</p>
+				</div>
+				<div id="generation-status" class="status-message" style="display: none;"></div>
+			</div>
+			<div class="modal-footer">
+				<button id="generate-form-submit" class="primary-btn">Generate Form</button>
+				<button class="close-modal secondary-btn">Cancel</button>
+			</div>
+		</div>
+	</div>
+
+	<style>
+		.header-actions {
+			display: flex;
+			gap: 1rem;
+			align-items: center;
+		}
+
+		.generate-btn {
+			background-color: #1a73e8;
+			color: white;
+			border: none;
+			padding: 12px 24px;
+			border-radius: 4px;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			font-size: 14px;
+		}
+
+		.generate-btn:hover {
+			background-color: #1557b0;
+		}
+
+		.form-group {
+			margin-bottom: 1.5rem;
+		}
+
+		.form-group label {
+			display: block;
+			margin-bottom: 0.5rem;
+			font-weight: 500;
+		}
+
+		.form-group textarea {
+			width: 100%;
+			padding: 0.75rem;
+			border: 1px solid #ddd;
+			border-radius: 4px;
+			font-size: 1rem;
+			resize: vertical;
+		}
+
+		.help-text {
+			color: #666;
+			font-size: 0.875rem;
+			margin-top: 0.25rem;
+		}
+
+		.status-message {
+			padding: 1rem;
+			border-radius: 4px;
+			margin: 1rem 0;
+		}
+
+		.status-message.loading {
+			background-color: #e8f0fe;
+			color: #1a73e8;
+		}
+
+		.status-message.error {
+			background-color: #fce8e6;
+			color: #d93025;
+		}
+
+		.status-message.success {
+			background-color: #e6f4ea;
+			color: #137333;
+		}
+
+		.primary-btn {
+			background-color: #1a73e8;
+			color: white;
+			border: none;
+			padding: 8px 16px;
+			border-radius: 4px;
+			cursor: pointer;
+		}
+
+		.secondary-btn {
+			background-color: #f8f9fa;
+			color: #3c4043;
+			border: 1px solid #dadce0;
+			padding: 8px 16px;
+			border-radius: 4px;
+			cursor: pointer;
+		}
+	</style>
+
+	<script>
+	function handleLogout() {
+		// Clear the authentication token
+		localStorage.removeItem('token');
+		// Redirect to login page
+		window.location.href = '/login';
+	}
+	</script>
+</body>
+</html>
